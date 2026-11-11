@@ -28,6 +28,7 @@ TEXT_FILES = [
     ("game/game-state.mjs", "javascript"),
     ("effects/phantom-owl/owl-effect.js", "javascript"),
     ("effects/cloud-burst/cloud-burst.js", "javascript"),
+    ("effects/cloud-burst/cloud-interaction.mjs", "javascript"),
     ("effects/phantom-owl/flight-motion.mjs", "javascript"),
     ("effects/phantom-owl/wing-volume.mjs", "javascript"),
     ("effects/phantom-owl/wing-deformation.glsl", "glsl"),

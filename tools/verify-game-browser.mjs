@@ -25,11 +25,12 @@ async function load(url){
  throw Error('Game did not load: '+JSON.stringify(errors));
 }
 const targetPoint=`(()=>{
- const e=[...__game.sprites.values()].sort((a,b)=>b.layout.progress-a.layout.progress)[0];
- if(!e)return null;
+ const entries=[...__game.sprites.values()].sort((a,b)=>b.layout.progress-a.layout.progress);
  // Find a point on the actual deformed silhouette, then click through the browser.
- for(const v of [.5,.55,.6,.45,.65,.4])for(const u of [.5,.45,.55,.4,.6]){
-  if(e.effect.hitTest(u,v))return {id:e.owl.id,x:e.layout.x+(u-.5)*e.layout.width,y:e.layout.y+(.5-v)*e.layout.height};
+ for(const e of entries)for(const v of [.5,.55,.6,.45,.65,.4])for(const u of [.5,.45,.55,.4,.6]){
+  const x=e.layout.x+(u-.5)*e.layout.width,y=e.layout.y+(.5-v)*e.layout.height;
+  if(x<8||x>innerWidth-8||y<8||y>innerHeight-8)continue;
+  if(e.effect.hitTest(u,v))return {id:e.owl.id,x,y};
  }
  return null;
 })()`;
@@ -68,20 +69,20 @@ try{
  const restart=await evaluate('(()=>{const r=document.querySelector("#restart").getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2};})()');await click(restart.x,restart.y);
  assert.equal(await evaluate('__game.state.status'),'playing');assert.equal(await evaluate('__game.state.score'),0);assert.equal(await evaluate('__game.state.owls.length'),0);
  assert.equal(await evaluate('__game.state.lives'),4);
- // Watch a missed owl continue through the camera, with exactly one life charged.
+ // Watch an off-axis owl continue outward without changing direction.
  await evaluate(`(()=>{const s=__game.state,o=s.spawn();s.nextSpawn=100;s.elapsed=o.lifetime+.45;__game.refresh();})()`);
  await shot('11-flying-past');assert.equal(await evaluate('__game.state.lives'),4);
  const beforePass=await evaluate('(()=>{const e=[...__game.sprites.values()][0];return {x:e.layout.x,y:e.layout.y,width:e.layout.width};})()');
  await evaluate('__game.step(.25)');
  const afterPass=await evaluate('(()=>{const e=[...__game.sprites.values()][0];return {x:e.layout.x,y:e.layout.y,width:e.layout.width};})()');
- assert(Math.abs(afterPass.x-720)<=Math.abs(beforePass.x-720));assert(Math.abs(afterPass.y-500)<=Math.abs(beforePass.y-500));assert(afterPass.width>=beforePass.width);
+ assert(Math.abs(afterPass.x-720)>=Math.abs(beforePass.x-720));assert(Math.abs(afterPass.y-500)>=Math.abs(beforePass.y-500));assert(afterPass.width>=beforePass.width);
  await shot('13-through-camera');
  await evaluate('__game.step(.8)');assert.equal(await evaluate('__game.state.lives'),3);assert.equal(await evaluate('__game.state.status'),'playing');
  assert.equal(await evaluate('document.querySelector("#lives").textContent'),'3 lives');
  await evaluate('__game.step(.1)');assert.equal(await evaluate('__game.state.lives'),3);
  await evaluate('__game.reset()');
  // Deliberately overlap two identical silhouettes: the closer owl wins once.
- await evaluate(`(()=>{const s=__game.state;s.spawn();s.spawn();s.elapsed=8;s.owls.forEach((o,i)=>{o.x=o.y=.5;o.phase=0;o.variant=0;o.born=i;});__game.refresh();})()`);
+ await evaluate(`(()=>{const s=__game.state;s.spawn();s.spawn();s.elapsed=8;s.owls.forEach((o,i)=>{o.x=o.y=o.aimX=o.aimY=.5;o.phase=0;o.variant=0;o.born=i;});__game.refresh();})()`);
  const near=await evaluate(targetPoint);assert(near);await click(near.x,near.y);
  assert.equal(await evaluate('__game.state.score'),10);assert.equal(await evaluate(`__game.state.owls.some(o=>o.id===${near.id})`),false);assert.equal(await evaluate('__game.state.owls.length'),1);
  // Portrait resize and real touch input.
@@ -97,7 +98,7 @@ try{
  await load('http://127.0.0.1:8000/app/game/?seed=12345&test=1');
  await clickButton('#start');
  await evaluate(`(()=>{
-  const s=__game.state,o=s.spawn();o.x=o.y=.5;o.variant=0;
+  const s=__game.state,o=s.spawn();o.x=o.y=o.aimX=o.aimY=.5;o.variant=0;
   s.elapsed=o.lifetime*.992;s.nextSpawn=100;
   __game.refresh();
  })()`);
@@ -115,6 +116,52 @@ try{
  await evaluate('__game.step(.65)');await shot('09-cloud-drift');
  await evaluate('__game.step(1.2)');await shot('10-cloud-fade');
  await evaluate('__game.step(.5)');assert.equal(await evaluate('__game.bursts.items.length'),0);
+ // Integration check: two live owls stir a shot cloud. Identical control and
+ // distant-owl clouds must stay identical, while the intersected cloud moves.
+ await evaluate(`(()=>{
+  __game.reset();const s=__game.state;s.nextSpawn=100;s.elapsed=6;
+  for(let i=0;i<3;i++){
+   const o=s.spawn();o.born=i===0?0:.2;o.lifetime=12;o.variant=i;o.y=o.aimY=.5;
+   o.x=i===0?.5:i===1?.45:.55;o.aimX=i===0?.5:i===1?.65:.35;
+  }
+  __game.refresh();const e=__game.sprites.get(s.owls[0].id);
+  window.__cloudCase={effect:e.effect,layout:{...e.layout}};
+ })()`);
+ const releasePoint=await evaluate(targetPoint);assert(releasePoint);await click(releasePoint.x,releasePoint.y);
+ assert.equal(await evaluate('__game.bursts.items.length'),1);
+ const interaction=await evaluate(`(async()=>{
+  const THREE=await import('/vendor/three/three.module.js');
+  const {CloudBursts}=await import('/effects/cloud-burst/cloud-burst.js');
+  const r=__game.renderer,control=new CloudBursts(r),far=new CloudBursts(r);
+  const {effect,layout}=window.__cloudCase;
+  control.add(effect,layout,__game.visualTime);far.add(effect,layout,__game.visualTime);
+  const target=new THREE.WebGLRenderTarget(128,80,{depthBuffer:false});
+  const copy=new THREE.ShaderMaterial({depthTest:false,depthWrite:false,uniforms:{u_map:{value:null}},
+   vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.0,1.0);}',
+   fragmentShader:'varying vec2 vUv;uniform sampler2D u_map;void main(){gl_FragColor=texture2D(u_map,vUv);}'});
+  const read=(item,kind)=>{copy.uniforms.u_map.value=item.field[kind][0].texture;item.field.pass(copy,target);
+   const data=new Uint8Array(128*80*4);r.readRenderTargetPixels(target,0,0,128,80,data);return data;};
+  const difference=(a,b)=>a.reduce((sum,n,i)=>sum+Math.abs(n-b[i]),0);
+  let maxSources=0;
+  for(let i=0;i<42;i++){
+   __game.step(1/60);const now=__game.visualTime;
+   maxSources=Math.max(maxSources,__game.bursts.items[0].disturbanceCount||0);
+   control.update(now);
+   const points=Array.from({length:7},()=>({x:.5,y:.5}));
+   far.update(now,[{from:points,to:points,dt:1/60,startTime:now-1/60,
+    before:{...layout,x:100000,opacity:1},after:{...layout,x:100010,opacity:1}}]);
+  }
+  const actual=__game.bursts.items[0],baseline=control.items[0],distant=far.items[0];
+  const result={maxSources,velocityDifference:difference(read(actual,'velocity'),read(baseline,'velocity')),
+   dyeDifference:difference(read(actual,'dye'),read(baseline,'dye')),
+   farVelocityDifference:difference(read(distant,'velocity'),read(baseline,'velocity')),
+   farDyeDifference:difference(read(distant,'dye'),read(baseline,'dye'))};
+  control.clear();far.clear();copy.dispose();target.dispose();delete window.__cloudCase;__game.refresh();return result;
+ })()`);
+ assert(interaction.maxSources>8,'Multiple nearby owls must contribute across GPU batches');
+ assert(interaction.velocityDifference>1000);assert(interaction.dyeDifference>100);
+ assert.equal(interaction.farVelocityDifference,0);assert.equal(interaction.farDyeDifference,0);
+ await shot('14-owls-stir-cloud');
  const programs=await evaluate('__game.renderer.info.programs.map(p=>p.diagnostics?.runnable??true)');assert(programs.every(Boolean));
  // Exercise the actual animation loop without test mode, not just manual state.
  await call('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
@@ -123,6 +170,6 @@ try{
  const performance=await evaluate(`new Promise(resolve=>{let frames=0;const start=performance.now(),gameStart=__game.state.elapsed;function count(){frames++;if(performance.now()-start<4000)requestAnimationFrame(count);else resolve({frames,wallSeconds:(performance.now()-start)/1000,gameSeconds:__game.state.elapsed-gameStart,owls:__game.state.owls.length});}requestAnimationFrame(count);})`);
  await shot('06-live');assert(performance.owls>=2);assert(performance.frames>40,'Game should remain responsive');
  assert.equal(errors.length,0,JSON.stringify(errors));
- const report={checks:'passed',pointsPerHit:10,desktop:[1440,1000],mobile:[390,844],resolution,programs:programs.length,performance,errors};
+ const report={checks:'passed',pointsPerHit:10,desktop:[1440,1000],mobile:[390,844],resolution,interaction,programs:programs.length,performance,errors};
  await writeFile(`${output}/report.json`,JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 }finally{ws.close();}

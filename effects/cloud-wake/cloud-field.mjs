@@ -51,6 +51,34 @@ export class CloudField {
     vec2 displacement=decode(carried.ba)+vel*u_dt;
     gl_FragColor=vec4(encode(vel),encode(clamp(displacement,vec2(-.44),vec2(.44))));
   }`);
+  this.interactionMaterial=material(`
+   uniform int u_disturbanceCount;
+   uniform vec4 u_disturbances[8];
+   uniform vec4 u_disturbanceShape[8];
+   void main(){
+    vec4 carried=texture2D(u_velocity,vUv);
+    vec2 vel=decode(carried.rg);
+    for(int i=0;i<8;i++){
+     if(i>=u_disturbanceCount)break;
+     vec4 source=u_disturbances[i],shape=u_disturbanceShape[i];
+     vec2 delta=metric(vUv-source.xy);
+     float radius=max(shape.x,.015);
+     float falloff=exp(-dot(delta,delta)/(radius*radius));
+     vec2 direction=delta/max(length(delta),radius*.2);
+     vec2 force=source.zw*.85+direction/vec2(u_aspect,1.0)*shape.w;
+     float speed=length(metric(force));
+     float response=(1.0-exp(-u_dt*8.0*shape.z*falloff))*smoothstep(.006,.08,speed);
+     vel=mix(vel,clamp(force,vec2(-.44),vec2(.44)),response);
+     vec2 tangent=vec2(-direction.y,direction.x)/vec2(u_aspect,1.0);
+     vel+=tangent*shape.y*min(speed,.8)*falloff*u_dt*.80*shape.z;
+    }
+    // Preserve displaced coordinates: passing owls stir existing pigment,
+    // without injecting a new owl image or pulling the cloud back into shape.
+    gl_FragColor=vec4(encode(clamp(vel,vec2(-.44),vec2(.44))),carried.ba);
+   }`);
+  this.interactionMaterial.uniforms.u_disturbanceCount={value:0};
+  this.interactionMaterial.uniforms.u_disturbances={value:Array.from({length:8},()=>new THREE.Vector4())};
+  this.interactionMaterial.uniforms.u_disturbanceShape={value:Array.from({length:8},()=>new THREE.Vector4())};
   this.dyeMaterial=material(`void main(){
     vec2 vel=decode(texture2D(u_velocity,vUv).rg);
     vec2 back=clamp(vUv-vel*u_dt,0.001,0.999);
@@ -143,7 +171,7 @@ export class CloudField {
  resize(width,height){
   this.aspect=width/height;this.width=512;this.height=Math.max(192,Math.min(768,Math.round(512/this.aspect)));
   const type=this.renderer.extensions.has('EXT_color_buffer_float')?THREE.HalfFloatType:THREE.UnsignedByteType;
-  for(const material of [this.resetMaterial,this.velocityMaterial,this.dyeMaterial,this.displayMaterial,this.releaseVelocityMaterial,this.releaseDyeMaterial])material.uniforms.u_zero.value=type===THREE.HalfFloatType?.5:128/255;
+  for(const material of [this.resetMaterial,this.velocityMaterial,this.interactionMaterial,this.dyeMaterial,this.displayMaterial,this.releaseVelocityMaterial,this.releaseDyeMaterial])material.uniforms.u_zero.value=type===THREE.HalfFloatType?.5:128/255;
   const make=(depthBuffer=false)=>new THREE.WebGLRenderTarget(this.width,this.height,{type,minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,depthBuffer,stencilBuffer:false});
   for(const t of [...(this.velocity||[]),...(this.dye||[]),this.source])t?.dispose();
   this.velocity=[make(),make()];this.dye=[make(),make()];this.source=make(true);this.reset();
@@ -156,7 +184,7 @@ export class CloudField {
   r.setClearColor(0,1);for(const target of this.dye){r.setRenderTarget(target);r.clear();}
   r.setRenderTarget(null);r.setClearColor(0xffffff,1);
  }
- step(dt,time,emitters,renderOwl){
+ step(dt,time,emitters,renderOwl,disturbances=[]){
   this.displayMaterial.uniforms.u_time.value=time;
   this.displayMaterial.uniforms.u_aspect.value=this.aspect;
   const r=this.renderer;r.setRenderTarget(this.source);r.setClearColor(0xffffff,1);r.clear();renderOwl();
@@ -166,6 +194,15 @@ export class CloudField {
    emitters.forEach((v,i)=>u.u_emitters.value[i].copy(v));
   };
   update(this.velocityMaterial);this.pass(this.velocityMaterial,this.velocity[1]);this.velocity.reverse();
+  for(let start=0;start<disturbances.length;start+=8){
+   const u=this.interactionMaterial.uniforms,count=Math.min(8,disturbances.length-start);
+   u.u_velocity.value=this.velocity[0].texture;u.u_aspect.value=this.aspect;u.u_dt.value=dt;u.u_disturbanceCount.value=count;
+   for(let i=0;i<count;i++){
+    const d=disturbances[start+i];u.u_disturbances.value[i].set(d.x,d.y,d.vx,d.vy);
+    u.u_disturbanceShape.value[i].set(d.radius,d.swirl,d.strength,d.expansion);
+   }
+   this.pass(this.interactionMaterial,this.velocity[1]);this.velocity.reverse();
+  }
   update(this.dyeMaterial);this.pass(this.dyeMaterial,this.dye[1]);this.dye.reverse();
   r.setRenderTarget(null);
  }
@@ -203,7 +240,7 @@ export class CloudField {
  }
  dispose(){
   for(const target of [...this.velocity,...this.dye,this.source])target.dispose();
-  for(const material of [this.resetMaterial,this.velocityMaterial,this.dyeMaterial,this.displayMaterial,this.releaseVelocityMaterial,this.releaseDyeMaterial])material.dispose();
+  for(const material of [this.resetMaterial,this.velocityMaterial,this.interactionMaterial,this.dyeMaterial,this.displayMaterial,this.releaseVelocityMaterial,this.releaseDyeMaterial])material.dispose();
   this.quad.geometry.dispose();
  }
 }

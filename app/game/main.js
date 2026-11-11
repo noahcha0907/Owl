@@ -57,10 +57,21 @@ async function start(){
   bursts.render(height);renderer.setViewport(0,0,width,height);
  }
  function advance(dt){
+  const previousGameTime=state.elapsed;
   visualTime+=dt;state.advance(dt);
   if(state.status==='menu')menuEffect.renderAt(visualTime);
   else effects.forEach((effect,i)=>effect.renderAt(visualTime+offsets[i]));
-  bursts.update(visualTime);syncSprites();
+  syncSprites();
+  const motions=[];
+  if(bursts.items.length&&dt>0){
+   const points=effects.map((effect,i)=>({from:effect.interactionPoints(visualTime-dt+offsets[i]),to:effect.interactionPoints(visualTime+offsets[i])}));
+   for(const entry of sprites.values()){
+    const pair=points[entry.owl.variant];
+    motions.push({from:pair.from,to:pair.to,dt,startTime:visualTime-dt,
+     before:projectOwl(entry.owl,previousGameTime,width,height,maxViewport),after:entry.layout});
+   }
+  }
+  bursts.update(visualTime,motions);
   lives.textContent=`${state.lives} ${state.lives===1?'life':'lives'}`;
   if(state.status==='over'&&!shownOver){
    shownOver=true;document.querySelector('#final-score').textContent=`${state.score} points`;

@@ -67,6 +67,12 @@ export class OwlEffect {
   }
   return points;
  }
+ interactionPoints(t){
+  const points=this.wingPoints(t);
+  const center=new THREE.Vector3(0,0,.04).applyMatrix4(this.owl.matrixWorld).project(this.camera);
+  points.push(new THREE.Vector2(center.x*.5+.5,center.y*.5+.5));
+  return points;
+ }
  renderAt(time){
   if(time<this.time){this.cloud.reset();this.time=0;}
   while(this.time<time-.00001){

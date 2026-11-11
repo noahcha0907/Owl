@@ -4,7 +4,6 @@ export const BOARD_ASPECT=1.6;
 export const STARTING_LIVES=4;
 export const FLY_PAST_SECONDS=1.15;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
-const mix=(a,b,t)=>a+(b-a)*t;
 
 export class GameState {
  constructor(seed=12345){this.reset(seed);}
@@ -22,7 +21,7 @@ export class GameState {
   if(x>.75&&y<.2)y=.25+this.random()*.5;
   const previous=this.owls.at(-1);
   if(previous&&Math.hypot(x-previous.x,y-previous.y)<.22)x=x<.5?.78:.22;
-  const owl={id:this.nextId++,born:this.elapsed,x,y,
+  const owl={id:this.nextId++,born:this.elapsed,x,y,aimX:x,aimY:y,
    lifetime:Math.max(6.8,11-this.elapsed*.025)+this.random()*2,
    phase:this.random()*Math.PI*2,variant:Math.floor(this.random()*3)};
   this.owls.push(owl);return owl;
@@ -61,9 +60,13 @@ export function projectOwl(owl,time,width,height,maxViewport=Infinity){
  // One continuous approach, including the final second. No exit waypoint,
  // lateral turn, or change of size law when the owl reaches the viewer.
  const size=Math.min(start/Math.max(depth,.001),Math.max(width,height)*4,maxViewport);
- const pull=journey*journey*(3-2*journey);
+ // Each random screen point defines its own perspective flight line. As depth
+ // falls, off-axis birds continue outward along that same line. A centered
+ // line passes through the camera; nothing steers toward a shared destination.
+ const travel=.12*(1/Math.max(depth,.001)-1);
+ const aimX=owl.aimX??owl.x,aimY=owl.aimY??owl.y;
  // A short near-camera dissolve avoids a full-screen pop at zero depth.
  const visibility=clamp(depth/.025,0,1),opacity=visibility*visibility*(3-2*visibility);
- return {x:mix(owl.x,.5,pull)*width,y:mix(owl.y,.5,pull)*height,
+ return {x:(owl.x+(aimX-.5)*travel)*width,y:(owl.y+(aimY-.5)*travel)*height,
   width:size,height:size/BOARD_ASPECT,progress,passing,depth,opacity};
 }
