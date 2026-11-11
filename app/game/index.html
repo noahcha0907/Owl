@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+ <title>Phantom Owl</title>
+ <link rel="icon" href="data:,">
+ <link rel="stylesheet" href="./game.css">
+</head>
+<body>
+ <canvas id="scene" aria-label="Floating phantom owl. Start to play, then click approaching owls for 10 points. Four missed owls end the round."></canvas>
+ <div id="hud" hidden><output id="score" aria-label="Score">0 pts</output><output id="lives" aria-label="Lives remaining" aria-live="polite">4 lives</output></div>
+ <p id="loading" role="status">Loading…</p>
+ <div id="menu" hidden><button id="start" type="button">Start</button></div>
+ <section id="game-over" role="dialog" aria-modal="true" aria-labelledby="result-title" hidden>
+  <div><h1 id="result-title">Out of lives.</h1><p id="final-score">0 points</p><button id="restart" type="button">Try again</button></div>
+ </section>
+ <script type="module" src="./main.js"></script>
+</body>
+</html>

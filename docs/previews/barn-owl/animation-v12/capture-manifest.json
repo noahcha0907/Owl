@@ -1,0 +1,85 @@
+{
+  "seed": 12345,
+  "desktopViewport": [
+    1440,
+    1000
+  ],
+  "devicePixelRatio": 1,
+  "mobileViewport": [
+    390,
+    844
+  ],
+  "frames": [
+    {
+      "name": "full-depth",
+      "time": 1.7386597035573796
+    },
+    {
+      "name": "recovery",
+      "time": 2.476178042066749
+    },
+    {
+      "name": "pause",
+      "time": 9.251225116394927
+    },
+    {
+      "name": "resume",
+      "time": 10.660621629809496
+    }
+  ],
+  "motionChecks": {
+    "pauseAfter": [
+      5,
+      6,
+      7
+    ],
+    "pausesChecked": 229,
+    "fullDepthFlapsChecked": 1404,
+    "continuousJoinsChecked": 537,
+    "pauseSeconds": 0.85
+  },
+  "desktop": {
+    "source": [
+      2172,
+      724
+    ],
+    "seed": 12345,
+    "geometryVertices": 53250,
+    "triangles": 49316,
+    "finiteGeometry": true,
+    "cloudSize": [
+      512,
+      356
+    ],
+    "cloudTextureType": 1016,
+    "colorFrame": [
+      0.5,
+      0.5,
+      0.7018866633687728,
+      0.336905598417011
+    ],
+    "programs": [
+      {
+        "runnable": true
+      },
+      {
+        "runnable": true
+      },
+      {
+        "runnable": true
+      },
+      {
+        "runnable": true
+      },
+      {
+        "runnable": true
+      },
+      {
+        "runnable": true
+      }
+    ],
+    "text": "",
+    "background": "rgb(255, 255, 255)"
+  },
+  "errors": []
+}

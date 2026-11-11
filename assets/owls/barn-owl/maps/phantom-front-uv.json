@@ -1,0 +1,32 @@
+{
+  "source": "../generated/phantom-front-v1.png",
+  "size": [
+    2172,
+    724
+  ],
+  "mapping": "Planar image-space UV shared by the deformed alpha-derived shell; one front glide view",
+  "uv_origin": "bottom-left",
+  "image_file_origin": "top-left",
+  "vertex_uvs": [
+    [
+      0,
+      0
+    ],
+    [
+      1,
+      0
+    ],
+    [
+      1,
+      1
+    ],
+    [
+      0,
+      1
+    ]
+  ],
+  "pixel_center_formula": "u=(x+0.5)/width; v=1-(y+0.5)/height",
+  "alignment": "Source coverage, normal and relief use the same undeformed vUv; vertex deformation carries those UVs with the shell. Procedural color coordinates are warped separately.",
+  "mesh_unwrap": false,
+  "cross_view_correspondence": false
+}

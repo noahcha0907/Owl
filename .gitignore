@@ -1,0 +1,14 @@
+# Local operating-system and development files
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+*.log
+
+# Local credentials and agent state
+.env
+.env.*
+!.env.example
+.codex/
+.agents/

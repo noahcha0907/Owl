@@ -1,0 +1,226 @@
+{
+  "scope": "This barn owl is the only owl in the game.",
+  "tool": "built-in image_gen",
+  "sources": [
+    "references/BarnOwlReference.jpg",
+    "generated/turnaround-v1.png"
+  ],
+  "prompts": [
+    "generated/animation-prompts.json",
+    "generated/glide-bank-prompt.txt",
+    "generated/glide-bank-correction-prompt.txt"
+  ],
+  "status": "seven reference sheets generated and visually reviewed; not timed animation clips",
+  "assets": [
+    {
+      "state_sheet": "flight",
+      "file": "generated/flight-v1.png",
+      "size": [
+        1448,
+        1086
+      ],
+      "mode": "RGBA",
+      "fully_transparent_fraction": 0.2342,
+      "sha256": "3eba3509bbab693440c1e0b10aa73e0d64714786eece60e181a109cc249e1ff2",
+      "requested_grid": {
+        "columns": 4,
+        "rows": 3
+      },
+      "requested_row_cameras": [
+        "front",
+        "left profile",
+        "rear three-quarter"
+      ],
+      "requested_column_poses": [
+        "upstroke apex",
+        "mid-downstroke",
+        "downstroke bottom",
+        "recovery upstroke"
+      ],
+      "review": "Wingbeat extremes read clearly. Scale and alignment vary; lower downstroke view approaches/crosses the sheet edge.",
+      "status": "pose_reference_only",
+      "camera_calibrated": false,
+      "runtime_animation_ready": false
+    },
+    {
+      "state_sheet": "takeoff",
+      "file": "generated/takeoff-v1.png",
+      "size": [
+        1448,
+        1086
+      ],
+      "mode": "RGBA",
+      "fully_transparent_fraction": 0.1694,
+      "sha256": "6f5cf04d51f128507a8378821e9954c9b7932c7b4362ef8d3bf2a56703424d8b",
+      "requested_grid": {
+        "columns": 4,
+        "rows": 3
+      },
+      "requested_row_cameras": [
+        "front",
+        "left profile",
+        "rear three-quarter"
+      ],
+      "requested_column_poses": [
+        "crouch",
+        "push-off",
+        "airborne downstroke",
+        "climb/recovery"
+      ],
+      "review": "Crouch, raised wings, airborne stroke, and climb are distinguishable; push-off leg extension is weak. Camera and scale vary.",
+      "status": "pose_reference_only",
+      "camera_calibrated": false,
+      "runtime_animation_ready": false
+    },
+    {
+      "state_sheet": "touchdown",
+      "file": "generated/touchdown-v1.png",
+      "size": [
+        1448,
+        1086
+      ],
+      "mode": "RGBA",
+      "fully_transparent_fraction": 0.1856,
+      "sha256": "bf1b76a7349fe865f440e7965f1e0de129cb59e1152c1c946438d7430c744272",
+      "requested_grid": {
+        "columns": 4,
+        "rows": 3
+      },
+      "requested_row_cameras": [
+        "front",
+        "left profile",
+        "rear three-quarter"
+      ],
+      "requested_column_poses": [
+        "approach",
+        "braking flare",
+        "foot contact",
+        "settled"
+      ],
+      "review": "Flare, feet extension, contact, and folded finish read clearly; outer wing margins are tight and some tips meet sheet edge.",
+      "status": "pose_reference_only",
+      "camera_calibrated": false,
+      "runtime_animation_ready": false
+    },
+    {
+      "state_sheet": "walking",
+      "file": "generated/walking-v1.png",
+      "size": [
+        1448,
+        1086
+      ],
+      "mode": "RGBA",
+      "fully_transparent_fraction": 0.5256,
+      "sha256": "cf9635331fb2285b10d65013e1103cec55f3a9947a1caf07990591e50e1f79ac",
+      "requested_grid": {
+        "columns": 4,
+        "rows": 3
+      },
+      "requested_row_cameras": [
+        "front",
+        "left profile",
+        "rear three-quarter"
+      ],
+      "requested_column_poses": [
+        "left contact",
+        "right passing",
+        "right contact",
+        "left passing"
+      ],
+      "review": "Alternating contact/lift poses are visible, but foot identity and proportions need reconciliation for a continuous loop.",
+      "status": "pose_reference_only",
+      "camera_calibrated": false,
+      "runtime_animation_ready": false
+    },
+    {
+      "state_sheet": "rest",
+      "file": "generated/rest-v1.png",
+      "size": [
+        1448,
+        1086
+      ],
+      "mode": "RGBA",
+      "fully_transparent_fraction": 0.5739,
+      "sha256": "41756d0e9084a6a0a830446d0204ef4186e487f90eda084716a05073800a22d3",
+      "requested_grid": {
+        "columns": 4,
+        "rows": 3
+      },
+      "requested_row_cameras": [
+        "front",
+        "left profile",
+        "rear three-quarter"
+      ],
+      "requested_column_poses": [
+        "neutral relaxed",
+        "half-closed eyes",
+        "eyes closed/head lowered",
+        "neutral relaxed"
+      ],
+      "review": "Relaxed eye closure and head dip are visible. Small body/plumage changes prevent direct seamless playback.",
+      "status": "pose_reference_only",
+      "camera_calibrated": false,
+      "runtime_animation_ready": false
+    },
+    {
+      "state_sheet": "idle",
+      "file": "generated/idle-v1.png",
+      "size": [
+        1448,
+        1086
+      ],
+      "mode": "RGBA",
+      "fully_transparent_fraction": 0.5194,
+      "sha256": "c8dbdc321c1eaec581519ac5d6d5610b7277d59076f1fcf97db1adb1b67a4e68",
+      "requested_grid": {
+        "columns": 4,
+        "rows": 3
+      },
+      "requested_row_cameras": [
+        "front",
+        "left profile",
+        "rear three-quarter"
+      ],
+      "requested_column_poses": [
+        "alert neutral",
+        "head turn left",
+        "blink/head dip",
+        "head turn right"
+      ],
+      "review": "Head turns and blink are visible. Some camera directions drift toward three-quarter views.",
+      "status": "pose_reference_only",
+      "camera_calibrated": false,
+      "runtime_animation_ready": false
+    },
+    {
+      "state_sheet": "glide-bank",
+      "file": "generated/glide-bank-v1.png",
+      "size": [
+        1448,
+        1086
+      ],
+      "mode": "RGBA",
+      "fully_transparent_fraction": 0.7167,
+      "sha256": "669ad1ec3f122519a524340fe8816aaead23b9925b610124bbe385de968b558d",
+      "requested_grid": {
+        "columns": 4,
+        "rows": 3
+      },
+      "requested_row_cameras": [
+        "front",
+        "left profile",
+        "rear three-quarter"
+      ],
+      "requested_column_poses": [
+        "level glide",
+        "bank left",
+        "bank right",
+        "descending glide"
+      ],
+      "review": "Level and tilted flight silhouettes are visible. Background removed in a second image-generation pass. Bank directions/angles are approximate; body roll is less pronounced than wing tilt.",
+      "status": "pose_reference_only",
+      "camera_calibrated": false,
+      "runtime_animation_ready": false
+    }
+  ]
+}

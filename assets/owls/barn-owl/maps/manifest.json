@@ -1,0 +1,34 @@
+{
+  "source": "generated/phantom-front-v1.png",
+  "source_sha256": "fad19b6a83a0160a116b662711ed1b8ba190f00cfe376e3671d93073f67757af",
+  "size": [
+    2172,
+    724
+  ],
+  "generator": "effects/phantom-owl/surface-maps.js: buildSurfaceMaps",
+  "status": "approximate_front_view_relief",
+  "anatomically_accurate": false,
+  "normal": {
+    "file": "maps/phantom-front-normal.png",
+    "encoding": "RGB = 0.5 * view-space normal + 0.5; +X right, +Y up, +Z viewer; linear data",
+    "alpha": "source coverage"
+  },
+  "relief": {
+    "file": "maps/phantom-front-relief.png",
+    "channels": {
+      "R": "hand-tuned normalized height plus luminance detail",
+      "G": "Weighted encoded image RGB brightness; no sRGB-to-linear decoding, not measured albedo",
+      "B": "unused zero",
+      "A": "source coverage"
+    },
+    "metric_depth": false
+  },
+  "uv": "maps/phantom-front-uv.json",
+  "limits": [
+    "Single view; not a multi-view mesh unwrap",
+    "Photo shading and pigmentation influence estimated feather relief",
+    "Broad head/breast/wing volume is manually approximated",
+    "No calibrated anatomy or hidden-surface reconstruction"
+  ],
+  "runtime": "Maps are regenerated from source on load; PNGs are deterministic exports of the same arrays."
+}

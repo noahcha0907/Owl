@@ -1,0 +1,120 @@
+{
+  "species_folder": "assets/owls/barn-owl",
+  "source": "references/BarnOwlReference.jpg",
+  "source_sha256": "b34a90a05b4cc60852b46f49955bb2d407af67ff4ffa6b84ce2758daf095ab90",
+  "generator": "built-in image_gen",
+  "prompt": "generated/turnaround-prompt.txt",
+  "sheet": "generated/turnaround-v1.png",
+  "image_size": [
+    1448,
+    1086
+  ],
+  "grid_requested": [
+    4,
+    3
+  ],
+  "status": "visual_reference_only",
+  "camera_calibrated": false,
+  "review": {
+    "coverage": "12 apparent views; requested camera angles approximate",
+    "issues": [
+      "Scale and pivot vary between views",
+      "Bottom row approaches cell boundaries",
+      "Some head/torso alignment and plumage continuity drift",
+      "Unseen anatomy inferred from a cropped photograph"
+    ],
+    "production_atlas_approved": false
+  },
+  "views": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "requested_azimuth_degrees": 0,
+      "requested_elevation_degrees": 0
+    },
+    {
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "requested_azimuth_degrees": 45,
+      "requested_elevation_degrees": 0
+    },
+    {
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "requested_azimuth_degrees": 90,
+      "requested_elevation_degrees": 0
+    },
+    {
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "requested_azimuth_degrees": 135,
+      "requested_elevation_degrees": 0
+    },
+    {
+      "index": 4,
+      "row": 1,
+      "column": 0,
+      "requested_azimuth_degrees": 180,
+      "requested_elevation_degrees": 0
+    },
+    {
+      "index": 5,
+      "row": 1,
+      "column": 1,
+      "requested_azimuth_degrees": 225,
+      "requested_elevation_degrees": 0
+    },
+    {
+      "index": 6,
+      "row": 1,
+      "column": 2,
+      "requested_azimuth_degrees": 270,
+      "requested_elevation_degrees": 0
+    },
+    {
+      "index": 7,
+      "row": 1,
+      "column": 3,
+      "requested_azimuth_degrees": 315,
+      "requested_elevation_degrees": 0
+    },
+    {
+      "index": 8,
+      "row": 2,
+      "column": 0,
+      "requested_azimuth_degrees": 0,
+      "requested_elevation_degrees": 45
+    },
+    {
+      "index": 9,
+      "row": 2,
+      "column": 1,
+      "requested_azimuth_degrees": 180,
+      "requested_elevation_degrees": 45
+    },
+    {
+      "index": 10,
+      "row": 2,
+      "column": 2,
+      "requested_azimuth_degrees": 0,
+      "requested_elevation_degrees": 90
+    },
+    {
+      "index": 11,
+      "row": 2,
+      "column": 3,
+      "requested_azimuth_degrees": 0,
+      "requested_elevation_degrees": -90
+    }
+  ],
+  "maps": {
+    "uv_mesh": null,
+    "normal": null,
+    "depth": null,
+    "reason": "Requires an approved common surface and aligned baking; no anatomical maps fabricated"
+  }
+}

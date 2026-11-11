@@ -1,0 +1,17 @@
+:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#39383f;background:#fff;color-scheme:light}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+#hud{position:fixed;top:max(22px,env(safe-area-inset-top));right:max(26px,env(safe-area-inset-right));display:flex;gap:22px;font-size:14px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:.02em;pointer-events:none;user-select:none}
+#lives{color:#817b89}
+#menu{position:fixed;left:0;right:0;top:var(--start-top,70%);display:flex;justify-content:center;pointer-events:none}
+#start{pointer-events:auto;min-width:110px;padding:12px 28px}
+#loading{position:fixed;inset:50% 24px auto;margin:0;text-align:center;color:#8b8791;font-size:14px}
+[hidden]{display:none!important}
+#game-over{position:fixed;inset:0;display:grid;place-items:center;text-align:center;background:rgb(255 255 255 / .78)}
+#game-over h1{font-size:30px;letter-spacing:-.04em;font-weight:500;margin:0 0 10px}
+#final-score{margin:0 0 24px;color:#817b89;font-size:14px}
+button{font:inherit;font-size:14px;border:1px solid #dedbe2;background:white;border-radius:24px;padding:11px 23px;color:inherit;cursor:pointer}
+button:hover{background:#f7f5f9;border-color:#bcb5c5}
+button:focus-visible{outline:2px solid #a58bc0;outline-offset:4px}
+@media(max-width:600px){#hud{top:max(18px,env(safe-area-inset-top));right:max(18px,env(safe-area-inset-right));gap:18px}}
